@@ -23,7 +23,7 @@ python manage.py runserver
 git clone https://github.com/True-Ha/Blog.git
 
 #### 3) Создать виртуальное окружение
-cd kino_project
+cd blog
 
 python -m venv venv
 #### 4) Активировать виртуальное окружение
