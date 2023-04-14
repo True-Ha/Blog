@@ -23,7 +23,7 @@ python manage.py runserver
 git clone https://github.com/True-Ha/Blog.git
 
 #### 3) Создать виртуальное окружение
-cd kino_project
+cd blog
 
 python -m venv venv
 #### 4) Активировать виртуальное окружение
@@ -35,11 +35,11 @@ Windows:
 pip install -r req.txt
 #### 6) Выполнить команду для выполнения миграций
 python manage.py migrate
-#### 8) Создать суперпользователя
+#### 7) Создать суперпользователя
 python manage.py createsuperuser
-#### 9) Запустить сервер
+#### 8) Запустить сервер
 python manage.py runserver
-#### 10) Ссылки
+#### 9) Ссылки
 Сайт http://127.0.0.1:8000/
 
 Админ панель http://127.0.0.1:8000/admin
