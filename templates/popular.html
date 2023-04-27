@@ -1,0 +1,15 @@
+
+
+    <ul class="list-group">
+        <li class="list-group-item active"><strong>Popular publications for the week</strong></li>
+        {% for post in post.total_views.pop_views %}
+        {% comment %} 
+        post.total_views
+
+       .order_by('-views')[:5] 
+         {% endcomment %}
+            <li class="list-group-item">
+                <a href="{% url 'Post_detail' post.slug %}">{{ post.title }}</a>
+            </li>
+        {% endfor %}
+    </ul>

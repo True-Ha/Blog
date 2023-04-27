@@ -1,29 +1,60 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Posts{% endblock %}
 
 {% block content %}
-{% for post in object_list %}
-<div class="col-md-12">
-    <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
-        <div class="col p-4 d-flex flex-column position-static">
-            <h3 class="mb-0">{{ post.title }}</h3>
-            <div class="mb-1 text-muted">{{ post.published.date }}</div>
-            {% autoescape off %}
-            <p class="card-text mb-auto">{{ post.body|truncatechars:50 }}.</p>
-            {% endautoescape %}
-            <a href="{% url 'Post_detail' post.pk %}" class="stretched-link">Continue reading</a>
-            {% if user == post.author or user.is_superuser %}
-            <div class="card-footer text-center text-muted">
-                <a href="{% url 'Post_edit' post.pk %}">Edit</a> |
-                <a href="{% url 'Post_delete' post.pk %}">Delete</a>
-            </div>
+
+
+<div class="w3-row">
+
+
+    <!-- Blog entries -->
+    <div class="w3-col l8 s12">
+        <!-- Blog entry -->
+        {% for post in object_list %}
+        <div class="w3-card-4 w3-margin w3-white">
+            {% if post.banner %}
+            <img src="{{ post.banner.url }}" class="center" alt="" style="width:100%">
+            {% else %}
+                <img src="{% static 'posts/workshop.jpg' %}" class="center" alt="" style="width:100%">
             {% endif %}
+            <div class="w3-container">
+                <h3><b>{{ post.title }}</b></h3>
+                <h5 class="text-right">{{ post.author }} | <span class="w3-opacity">{{ post.date }}</span></h5>
+            </div>
+
+            <div class="w3-container">
+                <p>{{ post.body|truncatechars:50 }}.</p>
+                <div class="w3-row">
+                    
+                    {% comment %} <p class="text-right"> {{ post.total_views }} Views</p> {% endcomment %}
+                    <div class="w3-col m8 s12">
+                         <form action="{% url 'Post_detail' post.slug %}">
+                            
+                            <button type="submit" class="btn btn-sm btn-primary">Read more</button>
+                            {% comment %} <form action="{% url 'Post_detail' post.slug %}" method="get">
+                            <input type="hidden" name="post-id" value="{{ post.id }}">
+                            <button type="submit" class="btn btn-sm btn-primary">Read more</button> {% endcomment %}
+                        </form> 
+                    </div>
+                    <div class="w3-col m3 w3-hide-small w3-right">
+                        {% comment %} <p><span class="w3-padding-large w3-right"><b>Views  </b> <span
+                                    class="w3-tag">{{ post.total_views }}</span></span></p> {% endcomment %}
+                        <p><span class="w3-padding-large w3-right"><b>Comments  </b> <span
+                                    class="w3-tag">{{ post.comments.count }}</span></span></p>
+                    </div>
+                </div>
+            </div>
         </div>
+        <hr>
+
+        {% endfor %}
     </div>
+    {% include 'include/sidebar.html'  %}
 </div>
-{% endfor %}
-</div>
+
+ {% comment %} {% include 'include/footer.html'%} {% endcomment %}
+{% comment %} <p><a href="{% url 'Post_detail' post.slug %}"
+                                class="w3-button w3-padding-large w3-white w3-border"><b>READ MORE »</a></p> {% endcomment %}
 {% endblock %}
-
-
