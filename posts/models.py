@@ -14,6 +14,7 @@ class Post(models.Model):
     body = models.TextField(max_length=1000)
     date = models.DateTimeField(auto_now_add=True)
     views = models.ManyToManyField(IpModel, related_name="post_views", blank=True)
+    likes = models.ManyToManyField(IpModel, related_name="post_likes", blank=True)
     banner = models.ImageField("Banner", upload_to="posts/", null=True)
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -29,11 +30,13 @@ class Post(models.Model):
         return self.title
     
     def get_absolute_url(self):
-        return reverse('Post_detail', kwargs={"slug": self.url})
+        return reverse('Post_detail', kwargs={"slug": self.slug})
     
-    def total_views(self):
-        # pop_views = self.objects.filter().order_by('-views')[:5] 
+    def total_views(self): 
         return self.views.count()
+    
+    def total_likes(self): 
+        return self.likes.count()
     
 # args=[str(self.id)]  kwargs={"slug": self.url}
 
@@ -58,9 +61,3 @@ class Comment(models.Model):
 
     
 
-class Tag(models.Model):
-    name = models.CharField(max_length=100)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.name

@@ -11,7 +11,7 @@
         <p class="text-right m-3">by {{ object.author }} | {{ object.date }} </p>
 
         <p class="text-left p-5"> {{ object.body }}</p>
-        {% comment %} <p class="text-right m-3"> {{ post.total_views }} Views</p> {% endcomment %}
+        <p class="text-right m-3"> {{ post.total_views }} Views</p>
         {% for tag in post.tags.all %}
         <a href="#" class="badge badge-info">{{ tag }}</a>
         {% endfor %}
@@ -22,6 +22,16 @@
         <a class="m-3" href="{% url 'Post_delete' post.slug %}">Delete</a></p>
     {% endif %}
     <p class="text-center">Back to <a href="{% url 'Post_list' %}">All Posts</a>.</p>
+    <p class="text-right"><form action="{% url 'Post_like' post.slug %}" method="get">
+        {% csrf_token %}
+        <button type="submit" name="slug" value="{{ post.slug }}" class="btn btn-sm btn-primary">
+            {% if like_status %}
+                Unlike
+            {% else %}
+                Like
+            {% endif %}
+        </button>
+    </form></p>
 
 
 

@@ -1,5 +1,7 @@
+from typing import Any
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.http import HttpResponseNotFound
+from django.db.models.query import QuerySet
+from django.http import HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from taggit.models import Tag
@@ -58,24 +60,41 @@ class PostDetailView(LoginRequiredMixin, DetailView):
  
             return redirect(reverse("Post_detail", kwargs={"slug": post.slug}))
     
-    
-    # def get(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        context = self.get_context_data(object=self.object)
+
+        #addung like count
+        like_status = False
+        ip = get_client_ip(request)
+        if self.object.likes.filter(id=IpModel.objects.get(ip=ip).id).exists():
+            like_status = True
+        else:
+            like_status = False
+        context['like_status'] = like_status
+
+        return self.render_to_response(context)
+
+
+
+    # def get(self, request, slug, *args, **kwargs):
     #     self.object = self.get_object()
     #     context = self.get_context_data(object=self.object)
     #     ip = get_client_ip(self.request)
     #     print(ip)
     #     if IpModel.objects.filter(ip=ip).exists():
     #         print("ip already present")
-    #         post_id = request.GET.get('post-id')
-    #         print(post_id)
-    #         post = Post.objects.get(pk=post_id)
+    #         post_slug = request.GET.get('slug')
+    #         print(post_slug)
+    #         post = Post.objects.get(slug=post_slug)
     #         post.views.add(IpModel.objects.get(ip=ip))
     #     else:
     #         IpModel.objects.create(ip=ip)
-    #         post_id = request.GET.get('post-id')
-    #         post = Post.objects.get(pk=post_id)
+    #         post_slug = request.GET.get('slug')
+    #         post = Post.objects.get(slug=post_slug)
     #         post.views.add(IpModel.objects.get(ip=ip))
     #     return self.render_to_response(context)
+        # return redirect(reverse("Post_detail", kwargs={"slug": post.slug}))
 
 
     def get_context_data(self, **kwargs):
@@ -141,16 +160,27 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 #     }
 #     return render(request, 'posts/Post_new.html', context)
 
-def tagged(request,slug):
-     tag = get_object_or_404(Tag, slug=slug)
-     posts = Post.objects.filter(tags=tag)
-     context = {
-         'tag': tag,
-         'posts': posts,
-     }
+class TagView(ListView):
+    model = Post
+    template_name = "posts/Post_list.html"
+    
+    def get_queryset(self):
+        return Post.objects.filter(tag__slug=self.kwargs.get('tag_slug'))
 
-     return render(request, 'posts/Post_new.html', context)
+# def detail_view(request, slug):
+#     post = get_object_or_404(Post, slug=slug)
+#     return render(request, 'posts/Post_detail.html', {'post':post})
 
-def detail_view(request, slug):
-    post = get_object_or_404(Post, slug=slug)
-    return render(request, 'posts/Post_detail.html', {'post':post})
+def postLike(request, slug):
+    post_slug = request.GET.get('slug')
+    post = Post.objects.get(slug=post_slug)
+    ip = get_client_ip(request)
+    if not IpModel.objects.filter(ip=ip).exists():
+        IpModel.objects.create(ip=ip)
+    if post.likes.filter(id=IpModel.objects.get(ip=ip).id).exists(): #slug
+        post.likes.remove(IpModel.objects.get(ip=ip))
+    else:
+        post.likes.add(IpModel.objects.get(ip=ip))
+    return HttpResponseRedirect(reverse('Post_detail', kwargs={"slug": post.slug})) 
+    #need+:?slug="name".   Likes is worked
+
