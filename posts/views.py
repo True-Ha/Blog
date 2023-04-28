@@ -165,7 +165,7 @@ class TagView(ListView):
     template_name = "posts/Post_list.html"
     
     def get_queryset(self):
-        return Post.objects.filter(tag__slug=self.kwargs.get('tag_slug'))
+        return Post.objects.filter(tags__slug=self.kwargs.get('tag_slug'))
 
 # def detail_view(request, slug):
 #     post = get_object_or_404(Post, slug=slug)
