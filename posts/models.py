@@ -38,6 +38,7 @@ class Post(models.Model):
     def total_likes(self): 
         return self.likes.count()
     
+    
 # args=[str(self.id)]  kwargs={"slug": self.url}
 
 

@@ -7,15 +7,16 @@
 
 
 <div class="w3-row">
-
-
+{% include 'include/sidebar.html'  %}
+    
     <!-- Blog entries -->
     <div class="w3-col l8 s12">
+
         <!-- Blog entry -->
-        {% for post in object_list %}
+        {% for post in posts %}
         <div class="w3-card-4 w3-margin w3-white">
             {% if post.banner %}
-            <img src="{{ post.banner.url }}" class="center" alt="" style="width:100%">
+            <img src="{{ post.banner.url }}" class="center" alt="" style="width:50%">
             {% else %}
                 <img src="{% static 'posts/workshop.jpg' %}" class="center" alt="" style="width:100%">
             {% endif %}
@@ -49,15 +50,17 @@
                         <p><span class="w3-padding-large w3-right"><b>Comments  </b> <span
                                     class="w3-tag">{{ post.comments.count }}</span></span></p>
                     </div>
+                    
                 </div>
             </div>
         </div>
         <hr>
-
+        
         {% endfor %}
     </div>
-    {% include 'include/sidebar.html'  %}
+
 </div>
+
 
  {% comment %} {% include 'include/footer.html'%} {% endcomment %}
 {% comment %} <p><a href="{% url 'Post_detail' post.slug %}"

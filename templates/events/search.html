@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <center>
+    {% if searched %}
+        <h1>You searched: {{ searched }}</h1>
+        <hr>
+        {% for post in posts %}
+            <h1 class="text-center"><a href="{% url 'Post_detail' post.slug %}">{{ post.title }}</a></h1>
+            {% for tag in post.tags.all %}
+            <p class="text-center"><a href="{% url 'Post_tag' tag.slug %} " class="badge badge-info">{{ tag }}</a></p>
+            {% endfor %}
+            <hr></br>
+        {% endfor %}
+
+
+    {% else %}
+        <h1>Hey! You Forgot To Search for a object...</h1>
+    {% endif %}
+
+    </center>
+
+{% endblock %}

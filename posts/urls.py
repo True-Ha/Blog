@@ -14,5 +14,9 @@ urlpatterns = [
          views.PostDeleteView.as_view(), name='Post_delete'),
     path('posts/like/<slug:slug>', views.postLike, name='Post_like'),
     path('tags/<slug:tag_slug>/', views.TagView.as_view(), name='Post_tag'),
+    path('search/', views.search, name='search'),
+    
     
 ]
+
+# path('posts/populate/<slug:slug>/', views.PopularPostView.as_view(), name='Post_populate'),

@@ -1,6 +1,6 @@
 from typing import Any
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.db.models.query import QuerySet
+
 from django.http import HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
@@ -15,18 +15,25 @@ from .forms import CommentForm
 
 from .models import *
 
-# def pageNotFound(request, exception):
-#         return HttpResponseNotFound('<h1>Страница не найдена</h1>')
+class TagMixin(object):
+    def get_context_data(self, **kwargs):
+        context = super(TagMixin, self).get_context_data(**kwargs)
+        context['tags'] = Tag.objects.all
+        return context
+
+def pageNotFound(request, exception):
+        return HttpResponseNotFound('<h1>Страница не найдена</h1>')
 
 class HomePageView(TemplateView): #maybe just VIEW?
     template_name = 'home.html'
 
 
-class PostListView(LoginRequiredMixin, ListView):
+class PostListView(LoginRequiredMixin, TagMixin, ListView):
     model = Post
     template_name = 'posts/Post_list.html'
     queryset = Post.objects.filter(draft=False).order_by('-date')
     paginate_by = 5
+    context_object_name = 'posts'
     
     
  
@@ -159,13 +166,34 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 #         'form': form,
 #     }
 #     return render(request, 'posts/Post_new.html', context)
-
-class TagView(ListView):
+class TagView(TagMixin ,ListView):
     model = Post
     template_name = "posts/Post_list.html"
+    context_object_name = 'posts'
     
     def get_queryset(self):
         return Post.objects.filter(tags__slug=self.kwargs.get('tag_slug'))
+
+
+
+
+########################################################################################################################
+
+
+
+
+# class PopularPostView(ListView):
+#     model = Post
+#     template_name = "posts/Post_list.html"
+#     queryset = Post.objects.filter(draft=False).order_by('-date')
+#     paginate_by = 5
+    
+    
+
+    
+
+
+########################################################################################################################
 
 # def detail_view(request, slug):
 #     post = get_object_or_404(Post, slug=slug)
@@ -184,3 +212,16 @@ def postLike(request, slug):
     return HttpResponseRedirect(reverse('Post_detail', kwargs={"slug": post.slug})) 
     #need+:?slug="name".   Likes is worked
 
+
+def search(request):
+
+
+    if request.method == "POST":
+        searched = request.POST['searched']
+        posts = Post.objects.filter(title__contains=searched)
+
+        return render(request, 'events/search.html', {"searched":searched, "posts":posts})
+    else:
+        return render(request, 'events/search.html', {})
+    
+    
