@@ -3,12 +3,16 @@
 {% block title %}Log in{% endblock %}
 
 {% block content %}
-<h2>Login</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button class="btn btn-success" type="submit">Log In</button>
-</form>
+<main class="main">
+    <div class="container">
+        <h2>Login</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="btn btn-success" type="submit">Log In</button>
+        </form>
+    </div>
+</main>
 {% comment %} <h2>Forgot password?</h2>
 <a href="{% url 'change_pass' %}">Change password</a> {% endcomment %}
 {% endblock %}
