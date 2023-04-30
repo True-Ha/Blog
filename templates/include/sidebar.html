@@ -5,12 +5,12 @@
   <div class="w3-card w3-margin w3-margin-top">
     <img src="{% static 'posts/images/workshop.jpg'%}" style="width:100%">
     <div class="w3-container w3-white">
-          <form class="d-flex" method=POST action="{% url 'search' %}">
+      <form class="d-flex" method=POST action="{% url 'search' %}">
         {% csrf_token %}
-        <input class="form-control me-2"
-        type="search" placehplder="Search some post" aria-label="search" name="searched">
+        <input class="form-control me-2" type="search" placehplder="Search some post" aria-label="search"
+          name="searched">
         <button class="btn btn-outline-secondary" type="submit">Seacrh</button>
-    </form>
+      </form>
     </div>
   </div>
   <hr>
@@ -28,9 +28,11 @@
     </div>
     {% for tag in tags %}
     <div class="w3-container w3-padding w3-white">
-       <p class="w3-tag w3-light-grey w3-margin-bottom"><a href="{% url 'Post_tag' tag.slug %}" class='w3-light-grey'>{{ tag.name }}</a></p>
+      <p class="badge badge-info"><a href="{% url 'Post_tag' tag.slug %}">{{ tag.name }}</a></p>
     </div>
     {% endfor %}
+
+    {% comment %} class="w3-tag w3-light-grey w3-margin-bottom" class='w3-light-grey' {% endcomment %}
   </div>
 
   <!-- END Introduction Menu -->
@@ -43,15 +45,43 @@
 
 
 
-
+  {% for pop in popular_posts %}
     <ul class="w3-ul w3-hoverable w3-white">
       <li class="w3-padding-16">
-        <img src="{% static 'posts/images/workshop.jpg'%}" alt="Image" class="w3-left w3-margin-right"
+      {% if pop.banner %}
+            <img src="{{ pop.banner.url }}" alt="Image" class="w3-left w3-margin-right"
           style="width:50px">
-        <span class="w3-large">Lorem</span><br>
-        <span>Sed mattis nunc</span>
+            {% else %}
+               <img src="{% static 'posts/workshop.jpg' %}" alt="Image" class="w3-left w3-margin-right"
+          style="width:50px">
+            {% endif %}
+        
+  
+        <span class="w3-large">{{ pop.title }}</span><br>
+        <span>{{ post.body|truncatechars:20 }}</span>
       </li>
-      <li class="w3-padding-16">
+    {% endfor %}
+     
+    </ul>
+  </div>
+  <hr>
+</div>
+  {% comment %} {% include 'popular.html' %} {% endcomment %}
+  {% comment %} {% if popular_list %}
+  <ul class="list-group">
+    <li class="list-group-item active"><strong>Популярные публикации за неделю</strong></li>
+    {% for pop_post in popular_list %}
+    <li class="list-group-item">
+      <a href="{% url 'Post_detail' post.pk %}">{{ pop_post.post__title }}</a>
+    </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  <span class="w3-tag w3-light-grey w3-small w3-margin-bottom">New York</span>
+
+
+
+   <li class="w3-padding-16">
         <img src="{% static 'posts/images/gondol.jpg'%}" alt="Image" class="w3-left w3-margin-right" style="width:50px">
         <span class="w3-large">Ipsum</span><br>
         <span>Praes tinci sed</span>
@@ -66,22 +96,5 @@
         <span class="w3-large">Mingsum</span><br>
         <span>Lorem ipsum dipsum</span>
       </li>
-    </ul>
-  </div>
-  <hr>
+  {% endcomment %}
 
-{% comment %} {% include 'popular.html' %} {% endcomment %}
-  {% comment %} {% if popular_list %}
-  <ul class="list-group">
-    <li class="list-group-item active"><strong>Популярные публикации за неделю</strong></li>
-    {% for pop_post in popular_list %}
-    <li class="list-group-item">
-      <a href="{% url 'Post_detail' post.pk %}">{{ pop_post.post__title }}</a>
-    </li>
-    {% endfor %}
-  </ul>
-  {% endif %}
-  <span class="w3-tag w3-light-grey w3-small w3-margin-bottom">New York</span>
-   {% endcomment %}
-
-</div>

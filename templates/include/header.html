@@ -1,44 +1,46 @@
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="{% url 'home' %}">BLOG</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="{% url 'home' %}">Blog</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <!--Search-->
-    <form class="d-flex" method=POST action="{% url 'search' %}">
-        {% csrf_token %}
-        <input class="form-control me-2"
-        type="search" placehplder="Search some post" aria-label="search" name="searched">
-        <button class="btn btn-outline-secondary" type="submit">Seacrh</button>
-    </form>
-    <!--End search-->
-
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        {% if user.is_authenticated %}
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-                <a href="{% url 'Post_new' %}">+ New</a>
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
-                    aria-haspopup="true" aria-expanded="false">
-                    {{ user.username }}
-                </a>
-                <div class="dropdown-menu dropdown-menu-lg-right" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="{% url 'password_change'%}">Change password</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{% url 'logout' %}">
-                        Log Out</a>
-                </div>
-            </li>
-        </ul>
-        {% else %}
-        <form class="form-inline ml-auto">
-            <a href="{% url 'login' %}" class="btn btn-outline-secondary">
-                Log In</a>
-            <a href="{% url 'signup' %}" class="btn btn-primary ml-2">
-                Sign up</a>
+        <!--Search-->
+        <form class="d-flex" method=POST action="{% url 'search' %}">
+            {% csrf_token %}
+            <input class="form-control me-2" type="search" placehplder="Search some post" aria-label="search"
+                name="searched">
+            <button class="btn btn-outline-secondary" type="submit">Seacrh</button>
         </form>
-        {% endif %}
-    </div>
-</nav>
+        <!--End search-->
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            {% if user.is_authenticated %}
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a href="{% url 'Post_new' %}" style="color: white;">Add New Post</a>
+                    <a class="nav-link dropdown-toggle text-right" href="#" id="navbarDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        """
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-lg-right" aria-labelledby="navbarDropdown">
+                        <p class="text-center">{{ user.username }}</p>
+                        <a class="dropdown-item" href="{% url 'password_change'%}">Change password</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{% url 'logout' %}">
+                            Log Out</a>
+                    </div>
+                </li>
+            </ul>
+            {% else %}
+            <form class="form-inline ml-auto">
+                <a href="{% url 'login' %}" class="btn btn-outline-secondary">
+                    Log In</a>
+                <a href="{% url 'signup' %}" class="btn btn-primary ml-2">
+                    Sign up</a>
+            </form>
+            {% endif %}
+        </div>
+
+
+    </nav>

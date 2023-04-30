@@ -31,16 +31,24 @@
                     
                     {% comment %} <p class="text-right"> {{ post.total_views }} Views</p> {% endcomment %}
                     <div class="w3-col m8 s12">
-                    <p><a href="{% url 'Post_detail' post.slug %}"
-                                class="w3-button w3-padding-large w3-white w3-border"><b>READ MORE</a></p>
+                    {% comment %} <p><a href="{% url 'Post_detail' post.slug %}"
+                                class="w3-button w3-padding-large w3-white w3-border"><b>READ MORE</a></p> {% endcomment %}
 
                     {% for tag in post.tags.all %}
-                        <a href="{% url 'Post_tag' tag.slug %}">{{ tag.name }}</a>
+                        <a href="{% url 'Post_tag' tag.slug %}" class="badge badge-info">{{ tag.name }}</a>
                     {% endfor %}
-                        {% comment %} <form action="{% url 'Post_detail' post.slug %}" method="get">
+
+
+
+                        <form action="{% url 'Post_detail' post.slug %}" method="get">
                             <input type="hidden" name="slug" value="{{ post.slug }}">
                             <button type="submit" class="btn btn-sm btn-primary">Read more</button> 
-                        </form>  {% endcomment %}
+                        </form> 
+
+
+
+
+
                     </div>
                     <div class="w3-col m3 w3-hide-small w3-right">
                         <p><span class="w3-padding-large w3-right"><b>Views  </b> <span
@@ -61,8 +69,5 @@
 
 </div>
 
-
- {% comment %} {% include 'include/footer.html'%} {% endcomment %}
-{% comment %} <p><a href="{% url 'Post_detail' post.slug %}"
-                                class="w3-button w3-padding-large w3-white w3-border"><b>READ MORE »</a></p> {% endcomment %}
+{% include 'include/footer.html' %}
 {% endblock %}

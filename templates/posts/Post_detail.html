@@ -16,13 +16,7 @@
         <a href="{% url 'Post_tag' tag.slug %}" class="badge badge-info">{{ tag }}</a>
         {% endfor %}
 
-    </div>
-    {% if user == post.author or user.is_superuser %}
-    <p class="text-right"><a class="p-3" href="{% url 'Post_edit' post.slug %}">Edit</a> |
-        <a class="m-3" href="{% url 'Post_delete' post.slug %}">Delete</a></p>
-    {% endif %}
-    <p class="text-center">Back to <a href="{% url 'Post_list' %}">All Posts</a>.</p>
-    <p class="text-right"><form action="{% url 'Post_like' post.slug %}" method="get">
+            <p class=""><form action="{% url 'Post_like' post.slug %}" method="get_like">
         {% csrf_token %}
         <button type="submit" name="slug" value="{{ post.slug }}" class="btn btn-sm btn-primary">
             {% if like_status %}
@@ -32,6 +26,16 @@
             {% endif %}
         </button>
     </form></p>
+    </div>
+    {% if user == post.author or user.is_superuser %}
+    <p class="text-right"><a class="p-3" href="{% url 'Post_edit' post.slug %}">Edit</a> |
+        <a class="m-3" href="{% url 'Post_delete' post.slug %}">Delete</a></p>
+    {% endif %}
+    <p class="text-center">Back to <a href="{% url 'Post_list' %}">All Posts</a>.
+    
+    </p>
+ 
+
 
 
 

@@ -3,7 +3,7 @@
 {% block titile %}Home{% endblock %}
 
 {% block content %}
-
+<main class="main">
     <div class="text-center">
         <h1 class="display-4">Blog app</h1>
         <p class="lead">A Blog built with Django.</p>
@@ -18,8 +18,10 @@
                     role="button">Need AUTH</a>
                 </p>
         {% endif %}
-         {% include 'include/footer.html'%}
+ 
+         
     </div>
-   
+</main>
+{% include 'include/footer.html' %}
 
 {% endblock %}

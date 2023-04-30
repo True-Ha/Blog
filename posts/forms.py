@@ -14,7 +14,15 @@ class CommentForm(forms.ModelForm):
         
 
 
-# class PostForm(forms.ModelForm):
-#     class Meta:
-#         model = Post
-#         fields = ['title', 'body', 'tags' , 'banner', ]
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ['title', 'body', 'slug','tags' , 'banner', ]
+        prepopulated_fields = {"slug": ("title",)} #don't worked
+        # <input type="text" data-role="tagsinput" class="form-control" name="tags">
+        tags = forms.CharField(widget=forms.Textarea(
+                                                    attrs={
+                                                        "data-role": "tagsinput",
+                                                        "class": "form-control",
+                                                        "name": "tags"
+                                                        }))

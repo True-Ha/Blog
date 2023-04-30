@@ -10,7 +10,7 @@ from django.template.defaultfilters import slugify
 from django.views.generic import DetailView, ListView, TemplateView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
-from .forms import CommentForm
+from .forms import CommentForm, PostForm
 
 
 from .models import *
@@ -31,10 +31,16 @@ class HomePageView(TemplateView): #maybe just VIEW?
 class PostListView(LoginRequiredMixin, TagMixin, ListView):
     model = Post
     template_name = 'posts/Post_list.html'
-    queryset = Post.objects.filter(draft=False).order_by('-date')
+    # queryset = Post.objects.filter(draft=False).order_by('-date')
     paginate_by = 5
-    context_object_name = 'posts'
-    
+    # context_object_name = 'posts'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['posts'] = Post.objects.filter(draft=False).order_by('-date')
+        context['popular_posts'] = Post.objects.filter(draft=False).order_by('views')
+        return context
+        
     
  
 
@@ -67,7 +73,7 @@ class PostDetailView(LoginRequiredMixin, DetailView):
  
             return redirect(reverse("Post_detail", kwargs={"slug": post.slug}))
     
-    def get(self, request, *args, **kwargs):
+    def get_like(self, request, *args, **kwargs):
         self.object = self.get_object()
         context = self.get_context_data(object=self.object)
 
@@ -84,23 +90,23 @@ class PostDetailView(LoginRequiredMixin, DetailView):
 
 
 
-    # def get(self, request, slug, *args, **kwargs):
-    #     self.object = self.get_object()
-    #     context = self.get_context_data(object=self.object)
-    #     ip = get_client_ip(self.request)
-    #     print(ip)
-    #     if IpModel.objects.filter(ip=ip).exists():
-    #         print("ip already present")
-    #         post_slug = request.GET.get('slug')
-    #         print(post_slug)
-    #         post = Post.objects.get(slug=post_slug)
-    #         post.views.add(IpModel.objects.get(ip=ip))
-    #     else:
-    #         IpModel.objects.create(ip=ip)
-    #         post_slug = request.GET.get('slug')
-    #         post = Post.objects.get(slug=post_slug)
-    #         post.views.add(IpModel.objects.get(ip=ip))
-    #     return self.render_to_response(context)
+    def get(self, request, slug, *args, **kwargs):
+        self.object = self.get_object()
+        context = self.get_context_data(object=self.object)
+        ip = get_client_ip(self.request)
+        print(ip)
+        if IpModel.objects.filter(ip=ip).exists():
+            print("ip already present")
+            post_slug = request.GET.get('slug')
+            print(post_slug)
+            post = Post.objects.get(slug=slug)
+            post.views.add(IpModel.objects.get(ip=ip))
+        else:
+            IpModel.objects.create(ip=ip)
+            post_slug = request.GET.get('slug')
+            post = Post.objects.get(slug=post_slug)
+            post.views.add(IpModel.objects.get(ip=ip))
+        return self.render_to_response(context)
         # return redirect(reverse("Post_detail", kwargs={"slug": post.slug}))
 
 
@@ -112,14 +118,13 @@ class PostDetailView(LoginRequiredMixin, DetailView):
 
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
-    permission_required = 'blog.add_post'
+    # permission_required = 'blog.add_post'
     fields = ['title', 'body']
     template_name = 'posts/Post_edit.html'
     success_url = reverse_lazy('Post_list')
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
-    
     
     
     def test_func(self):
@@ -138,34 +143,34 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return my_obj.author == self.request.user
 
 
-class PostCreateView(LoginRequiredMixin, CreateView):
-    model = Post
-    template_name = 'posts/Post_new.html'
-    fields = ['title', 'body', 'tags' ]
-    prepopulated_fields = {"slug": ("title",)}
-    success_url = reverse_lazy('Post_list')
-    
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        return super().form_valid(form)
-    
+# class PostCreateView(LoginRequiredMixin, CreateView):
+#     model = Post
+#     template_name = 'posts/Post_new.html'
+#     success_url = reverse_lazy('Post_list')
+    # def form_valid(self, form):
+    #     form.instance.author = self.request.user
+    #     return super().form_valid(form)
 
-# def create_view(request):
-#     posts = Post.objects.order_by('-date')
-#     common_tags = Post.tags.most_common()[:4]
-#     form = PostForm(request.POST, request.FILES)
-#     if form.is_valid():
-#         newpost = form.save(commit=False)
-#         newpost.slug = slugify(newpost.title)
-#         newpost.save()
 
-#         form.save_m2m()
-#     context = {
-#         'posts': posts,
-#         'common_tags': common_tags,
-#         'form': form,
-#     }
-#     return render(request, 'posts/Post_new.html', context)
+def create_post(request):
+    posts = Post.objects.order_by('-date')
+    common_tags = Post.tags.most_common()[:4]
+    form = PostForm(request.POST, request.FILES)
+    if form.is_valid():
+        newpost = form.save(commit=False)
+        newpost.slug = slugify(newpost.title)
+        newpost.save()
+
+        form.save_m2m()
+    context = {
+        'posts': posts,
+        'common_tags': common_tags,
+        'form': form,
+        }
+    return render(request, 'posts/Post_new.html', context)
+
+
+
 class TagView(TagMixin ,ListView):
     model = Post
     template_name = "posts/Post_list.html"
@@ -182,22 +187,21 @@ class TagView(TagMixin ,ListView):
 
 
 
-# class PopularPostView(ListView):
-#     model = Post
-#     template_name = "posts/Post_list.html"
-#     queryset = Post.objects.filter(draft=False).order_by('-date')
-#     paginate_by = 5
-    
+
     
 
+class PopularPostView(ListView):
+    model = Post
+    template_name = 'posts/Post_list.html'
+    queryset = Post.objects.filter(draft=False).order_by('-date')
+    paginate_by = 5
+    context_object_name = 'posts'
+    
     
 
 
 ########################################################################################################################
 
-# def detail_view(request, slug):
-#     post = get_object_or_404(Post, slug=slug)
-#     return render(request, 'posts/Post_detail.html', {'post':post})
 
 def postLike(request, slug):
     post_slug = request.GET.get('slug')
@@ -205,12 +209,12 @@ def postLike(request, slug):
     ip = get_client_ip(request)
     if not IpModel.objects.filter(ip=ip).exists():
         IpModel.objects.create(ip=ip)
-    if post.likes.filter(id=IpModel.objects.get(ip=ip).id).exists(): #slug
+    if post.likes.filter(id=IpModel.objects.get(ip=ip).id).exists():
         post.likes.remove(IpModel.objects.get(ip=ip))
     else:
         post.likes.add(IpModel.objects.get(ip=ip))
     return HttpResponseRedirect(reverse('Post_detail', kwargs={"slug": post.slug})) 
-    #need+:?slug="name".   Likes is worked
+    
 
 
 def search(request):
